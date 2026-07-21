@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 캐싱 방지 메타 태그 (모바일 브라우저 및 카카오톡 인앱 브라우저 강제 최신화용) -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <title>진로계획설정 실전 워크북 패키지</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts & Material Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- html2pdf.js CDN (HTML을 고품질 PDF로 변환하는 강력한 라이브러리) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -75,13 +78,6 @@
     <!-- Custom Dialog Modal (Replaces Native Alert/Confirm to meet non-blocking strict requirements) -->
     <div id="custom_modal" class="no-print fixed inset-0 z-[100] flex items-center justify-center bg-black/50 opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full mx-4 shadow-xl border border-charcoal-200 transform scale-95 transition-transform duration-300" id="custom_modal_content">
-            <div id="modal_loading_spinner" class="hidden flex justify-center mb-4">
-                <!-- Advanced loading spinner for high-tech feeling -->
-                <svg class="animate-spin h-10 w-10 text-crimson-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            </div>
             <h4 id="modal_title" class="font-bold text-charcoal-900 text-base mb-2">알림</h4>
             <p id="modal_body" class="text-xs sm:text-sm text-charcoal-700 leading-relaxed mb-6">내용이 들어갑니다.</p>
             <div id="modal_actions" class="flex justify-end gap-3">
@@ -99,17 +95,9 @@
                 <h1 class="font-extrabold text-charcoal-900 tracking-tight text-lg">진로계획설정 실전 워크북 패키지</h1>
             </div>
             <div class="flex flex-wrap items-center justify-center gap-3">
-                <button onclick="submitViaEmail()" class="flex items-center gap-2 border-2 border-crimson-600 hover:bg-crimson-50 text-crimson-600 font-bold py-1.5 px-4 rounded-full text-sm transition shadow-sm">
-                    <span class="material-icons text-sm">send</span>
-                    디렉터에게 제출하기
-                </button>
-                <button onclick="downloadPDF()" class="flex items-center gap-2 border border-crimson-600 hover:bg-crimson-50 text-crimson-600 font-semibold py-2 px-4 rounded-full transition text-sm">
-                    <span class="material-icons text-sm">file_download</span>
-                    PDF 직접 다운로드
-                </button>
-                <button onclick="window.print()" class="flex items-center gap-2 bg-crimson-600 hover:bg-crimson-700 text-white font-semibold py-2 px-5 rounded-full transition shadow-md hover:shadow-lg text-sm">
+                <button onclick="window.print()" class="flex items-center gap-2 bg-crimson-600 hover:bg-crimson-700 text-white font-semibold py-2.5 px-6 rounded-full transition shadow-md hover:shadow-lg text-sm">
                     <span class="material-icons text-sm">print</span>
-                    A4 규격 인쇄/저장
+                    A4 규격 인쇄 / PDF 저장
                 </button>
                 <button onclick="resetInputs()" class="flex items-center gap-2 border border-charcoal-200 hover:bg-charcoal-100 text-charcoal-700 font-semibold py-2 px-4 rounded-full transition text-sm">
                     <span class="material-icons text-sm">refresh</span>
@@ -240,7 +228,7 @@
                         <div>
                             <span class="text-xs font-bold text-crimson-600 tracking-wider">생각 (Ideas)</span>
                             <h5 class="font-extrabold text-charcoal-900 text-sm mt-1 mb-2">기획 설계 및 솔루션 도출</h5>
-                            <p class="text-[11px] text-charcoal-700 leading-relaxed">아이디어 제안, 분석, 비주얼 기반 기획력</p>
+                            <p class="text-[11px] text-charcoal-700 leading-relaxed">아이디어 제안, 문제 분석, 비주얼 기반 기획력</p>
                         </div>
                         <div class="flex justify-end mt-4">
                             <span class="material-icons text-charcoal-200 select-icon">radio_button_unchecked</span>
@@ -717,7 +705,6 @@
         </section>
 
         <!-- SUMMARY (최종 종합 페이지 - 원페이지 진로계획서) -->
-        <!-- ID 'final_summary_card' is added specifically for high-definition HTML-to-PDF scan conversion -->
         <section id="final_summary_card" class="page-break bg-white border border-charcoal-200 rounded-3xl p-6 sm:p-12 shadow-md relative overflow-hidden">
             <!-- Signature background graphics -->
             <div class="absolute inset-0 bg-[radial-gradient(#f3f4f6_1.5px,transparent_1.5px)] [background-size:16px_16px] opacity-40"></div>
@@ -857,37 +844,24 @@
             </div>
         </section>
 
-        <!-- Bottom Call To Action Button Section (Separated out of Summary Box for clean PDF Capture) -->
-        <div class="flex justify-center mt-8 gap-4 no-print pb-12">
-            <button onclick="submitViaEmail()" class="flex items-center gap-3 bg-crimson-600 hover:bg-crimson-700 text-white font-extrabold py-3.5 px-8 rounded-full transition shadow-md hover:shadow-lg text-sm tracking-wide">
-                <span class="material-icons text-base">send</span>
-                완성된 진로계획서 디렉터에게 최종 제출하기 (PDF 첨부 자동전송)
+        <!-- Bottom Action CTA -->
+        <div class="text-center mt-8 no-print pb-12">
+            <button onclick="window.print()" class="inline-flex items-center gap-2 bg-crimson-600 hover:bg-crimson-700 text-white font-extrabold py-3.5 px-8 rounded-full transition shadow-md hover:shadow-lg text-sm tracking-wide">
+                <span class="material-icons text-base">print</span>
+                원페이지 진로계획서 인쇄 및 PDF 저장하기
             </button>
+            <p class="text-[11px] text-charcoal-700 mt-2 font-semibold">인쇄 설정창의 대상 인쇄기를 'PDF로 저장'으로 선택하시면 내 기기에 깔끔한 계획서 파일이 소장됩니다.</p>
         </div>
 
     </main>
 
     <!-- Javascript Client State Synchronizer & Auto-Saver -->
     <script>
-        // 이메일 제출 무료 수집을 위한 Web3Forms API 설정
-        const EMAIL_CONFIG = {
-            web3formsAccessKey: "23c1065a-ed22-4a2a-9cdf-e9c0dcbab85a" // 발급 완료된 Web3Forms API Key
-        };
-
         // Custom Notification modal handlers (No Alert/Confirm Policy)
-        function customAlert(title, message, isLoading = false) {
+        function customAlert(title, message) {
             document.getElementById('modal_title').innerText = title;
             document.getElementById('modal_body').innerText = message;
             document.getElementById('modal_cancel').style.display = 'none';
-            
-            const spinner = document.getElementById('modal_loading_spinner');
-            if (isLoading) {
-                spinner.classList.remove('hidden');
-                document.getElementById('modal_actions').style.display = 'none';
-            } else {
-                spinner.classList.add('hidden');
-                document.getElementById('modal_actions').style.display = 'flex';
-            }
             
             const modal = document.getElementById('custom_modal');
             const content = document.getElementById('custom_modal_content');
@@ -903,20 +877,10 @@
             });
         }
 
-        // Close loading spinner programmatically
-        function closeCustomAlert() {
-            const modal = document.getElementById('custom_modal');
-            const content = document.getElementById('custom_modal_content');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            content.classList.add('scale-95');
-        }
-
         function customConfirm(title, message) {
             document.getElementById('modal_title').innerText = title;
             document.getElementById('modal_body').innerText = message;
             document.getElementById('modal_cancel').style.display = 'inline-block';
-            document.getElementById('modal_loading_spinner').classList.add('hidden');
-            document.getElementById('modal_actions').style.display = 'flex';
             
             const modal = document.getElementById('custom_modal');
             const content = document.getElementById('custom_modal_content');
@@ -1065,109 +1029,6 @@
             // Auto Save
             if (!skipSave) {
                 localStorage.setItem('selectedBlocks', JSON.stringify(Array.from(state.selectedBlocks)));
-            }
-        }
-
-        // Direct Download of beautifully formatted PDF (Local Client Processing)
-        async function downloadPDF() {
-            const stdName = document.getElementById('cov_name').value.trim() || '참여자';
-            customAlert("PDF 파일 생성 중... ⏳", "고해상도 디자인 PDF 문서를 기기에 저장하기 위해 실시간 렌더링하고 있습니다. 잠시만 기다려 주세요.", true);
-            
-            try {
-                const element = document.getElementById('final_summary_card');
-                const opt = {
-                    margin:       [10, 10, 10, 10],
-                    filename:     `원페이지_진로계획서_${stdName}.pdf`,
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 1.5, useCORS: true, logging: false },
-                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-
-                await html2pdf().set(opt).from(element).save();
-                closeCustomAlert();
-                customAlert("다운로드 완료 🎉", "진로계획서 PDF 파일이 기기에 성공적으로 다운로드되었습니다.");
-            } catch (error) {
-                closeCustomAlert();
-                console.error(error);
-                customAlert("다운로드 실패 ❌", "PDF 변환 및 다운로드 중 내부 렌더링 오류가 발생했습니다.");
-            }
-        }
-
-        // Formulate High-Quality PDF & POST payload directly to Web3Forms API
-        async function submitViaEmail() {
-            const stdName = document.getElementById('cov_name').value.trim();
-            const stdTeam = document.getElementById('cov_team').value.trim();
-
-            if (!stdName) {
-                customAlert("제출 실패 ❌", "제출하기 전에 표지 페이지에서 '성명'을 반드시 입력해 주세요.");
-                return;
-            }
-
-            if (EMAIL_CONFIG.web3formsAccessKey === "YOUR_ACCESS_KEY_HERE" || !EMAIL_CONFIG.web3formsAccessKey) {
-                customAlert("알림 (디렉터 사전 설정 필요) ⚙️", "현재 디렉터님의 고유 수집 키(Access Key)가 코드 파일에 설정되어 있지 않습니다. 디렉터 가이드 안내에 따라 Web3Forms 무료 키를 소스코드의 'EMAIL_CONFIG'에 적용해 주세요.");
-                return;
-            }
-
-            const proceed = await customConfirm("진로계획서 최종 제출 ✉️", `[${stdName}] 님, 완성된 '원페이지 진로계획서'를 고화질 디자인 PDF 첨부파일과 함께 최원혜 디렉터님께 즉시 제출하시겠습니까?`);
-            if (!proceed) return;
-
-            // Show Advanced Loading Spinner modal
-            customAlert("PDF 계획서 굽는 중... ⏳", "입력하신 계획서 데이터를 바탕으로 고해상도 디자인 PDF 문서를 실시간 렌더링하고 있습니다. 잠시만 기다려 주세요.", true);
-
-            try {
-                // PDF Rendering options configured for A4 paper ratio optimization (Scale is set to 1.5 to stay under API file limits)
-                const element = document.getElementById('final_summary_card');
-                const opt = {
-                    margin:       [10, 10, 10, 10],
-                    filename:     `원페이지_진로계획서_${stdName}.pdf`,
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 1.5, useCORS: true, logging: false },
-                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-
-                // Produce beautiful PDF blob using html2pdf client engine
-                const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
-                const pdfFile = new File([pdfBlob], `원페이지_진로계획서_${stdName}.pdf`, { type: 'application/pdf' });
-
-                // Multi-part FormData pack setup
-                const formData = new FormData();
-                formData.append('access_key', EMAIL_CONFIG.web3formsAccessKey);
-                formData.append('subject', `[진로계획서] ${stdName} (${stdTeam || '무소속'})`);
-                formData.append('from_name', `${stdName} (Mental-ON)`);
-                formData.append('name', stdName);
-                formData.append('email', "student_sender@mentalon.com"); // placeholder email
-                formData.append('attachment', pdfFile); // Attached PDF binary
-                formData.append('message', `
-안녕하세요, 최원혜 디렉터님!
-청년도전지원사업 참여 청년 [${stdName}] 님의 실전 진로계획서 제출 내역입니다.
-
-- 성명: ${stdName}
-- 소속 조: ${stdTeam || '미지정'}
-- 서약일자: ${document.getElementById('pledge_date').value}
-
-※ 본 메일의 첨부파일란에 수려하게 디자인된 고품질 원페이지 진로계획서 PDF 문서가 자동으로 첨부되어 배달되었습니다.
-첨부된 PDF 파일을 열어 상세 로드맵을 확인해 주세요.
-                `);
-
-                // Send Multipart Form Data directly to Web3Forms API
-                const response = await fetch("https://api.web3forms.com/submit", {
-                    method: "POST",
-                    body: formData
-                });
-                
-                const result = await response.json();
-                closeCustomAlert(); // hide spinner
-
-                if (result.success) {
-                    customAlert("제출 완전 성공 🎉", `축하합니다, [${stdName}] 님! 최원혜 디렉터님의 메일함으로 디자인된 고품질 [원페이지 진로계획서 PDF] 파일이 성공적으로 배달되었습니다. 완주 경로를 멋지게 완수해 보아요!`);
-                } else {
-                    customAlert("제출 실패 ❌", "현재 무료 전송 한도를 초과했거나 지연되었습니다. 상단 메뉴의 [PDF 직접 다운로드] 버튼을 눌러 기기에 직접 저장한 후 디렉터님께 개별(카카오톡/이메일) 전달해 주세요!");
-                }
-
-            } catch (error) {
-                closeCustomAlert();
-                console.error(error);
-                customAlert("제출 실패 ❌", "서버 전송 중 오류가 발생했습니다. 상단 메뉴의 [PDF 직접 다운로드] 버튼을 눌러 기기에 직접 저장한 후 디렉터님께 카카오톡/이메일로 제출해 주세요!");
             }
         }
 
