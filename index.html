@@ -9,6 +9,9 @@
     
     <title>진로계획설정 실전 워크북 패키지</title>
     
+    <!-- ✅ 해결 1: 브라우저가 요구하는 PWA 필수 테마 컬러 메타태그 추가 -->
+    <meta name="theme-color" content="#dc2626">
+    
     <!-- 앱 아이콘(파비콘) 및 iOS 홈 화면 아이콘 설정 -->
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
@@ -48,7 +51,6 @@
             outline: none; border-color: #dc2626 !important; box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
         }
         .block-selected { background-color: #fff1f2 !important; border-color: #dc2626 !important; color: #dc2626 !important; }
-        /* 접근성: 키보드 포커스 스타일 명확화 */
         [role="button"]:focus { outline: 2px solid #dc2626; outline-offset: 2px; }
     </style>
 </head>
@@ -74,7 +76,7 @@
                 <h1 class="font-extrabold text-charcoal-900 tracking-tight text-lg">진로계획설정 실전 워크북 패키지</h1>
             </div>
             <div class="flex flex-wrap items-center justify-center gap-3">
-                <!-- PWA 앱 설치 버튼 (JS에서 제어) -->
+                <!-- PWA 앱 설치 버튼 -->
                 <button id="btn-install" style="display: none;" class="flex items-center gap-2 bg-charcoal-900 hover:bg-black text-white font-semibold py-2.5 px-6 rounded-full transition shadow-md hover:shadow-lg text-sm animate-pulse">
                     <span class="material-icons text-sm">install_mobile</span>
                     앱으로 설치
@@ -109,12 +111,10 @@
                 </p>
             </div>
 
-            <!-- Identity Fields -->
             <div class="bg-charcoal-100 rounded-2xl p-6 sm:p-8 max-w-md mx-auto w-full border border-charcoal-200">
                 <div class="space-y-4">
                     <div class="flex items-center gap-4">
                         <label class="w-20 font-bold text-charcoal-700 text-sm">성명</label>
-                        <!-- data-sync 속성으로 동기화 대상 요소 지정 -->
                         <input type="text" id="cov_name" data-sync="summary_name,pledge_name" placeholder="성명을 입력해 주세요" class="flex-1 bg-white border border-charcoal-200 rounded-lg py-2.5 px-4 text-sm font-medium focus:border-crimson-600">
                     </div>
                     <div class="flex items-center gap-4">
@@ -145,14 +145,13 @@
                 <textarea id="act1_record" data-sync="summary_action_input" rows="3" placeholder="기록을 남겨주세요" class="w-full bg-charcoal-100 border border-charcoal-200 rounded-xl p-4 text-sm font-medium focus:bg-white"></textarea>
             </div>
 
-            <!-- Activity 2 (접근성 및 데이터 속성 적용) -->
+            <!-- Activity 2 -->
             <div class="space-y-6 mb-10">
                 <div class="flex items-center gap-2">
                     <span class="bg-charcoal-900 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">A2</span>
                     <h4 class="font-bold text-charcoal-900 text-base">나의 프레디저 데이터 연결하기</h4>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <!-- role="button"과 tabindex="0" 추가로 키보드 접근성 확보 -->
                     <div data-skill-group="사람" data-skill-name="대인관계 및 협업 조율 역량" id="skill_peo" role="button" tabindex="0" class="border border-charcoal-200 rounded-2xl p-4 cursor-pointer hover:border-crimson-600 transition flex flex-col justify-between min-h-[140px] bg-white">
                         <div>
                             <span class="text-xs font-bold text-crimson-600 tracking-wider">사람 (People)</span>
@@ -370,7 +369,7 @@
                     <h4 class="font-bold text-charcoal-900 text-base">나만의 유연한 ‘에너지 블록’ 조립</h4>
                 </div>
                 
-                <!-- Time Block Grid (접근성 및 데이터 속성 적용) -->
+                <!-- Time Block Grid -->
                 <div class="border border-charcoal-200 rounded-2xl overflow-hidden bg-charcoal-100">
                     <div class="grid grid-cols-13 border-b border-charcoal-200 bg-charcoal-700 text-white text-[10px] font-bold py-2 text-center select-none hidden sm:grid">
                         <div>09-10</div><div>10-11</div><div>11-12</div><div class="bg-charcoal-800 text-charcoal-400">12-13</div><div>13-14</div><div>14-15</div><div>15-16</div><div>16-17</div><div>17-18</div><div class="bg-charcoal-800 text-charcoal-400">18-19</div><div>19-20</div><div>20-21</div><div>21~</div>
@@ -627,16 +626,14 @@
         ------------------------------------------------------------- */
         const APP_STATE_KEY = 'workbook_app_state_v2';
         
-        // 단일 State 객체 구조
         let appState = {
-            inputs: {},            // 모든 텍스트/textarea 입력값 보관
-            skillGroup: '',        // 선택된 스킬 그룹
-            skillName: '',         // 선택된 스킬 이름
-            focusType: '',         // 라디오 버튼 선택값
-            timeBlocks: []         // 선택된 시간 블록 배열
+            inputs: {},
+            skillGroup: '',
+            skillName: '',
+            focusType: '',
+            timeBlocks: []
         };
 
-        // 로컬스토리지 저장 함수
         function saveState() {
             localStorage.setItem(APP_STATE_KEY, JSON.stringify(appState));
         }
@@ -644,7 +641,6 @@
         /* -------------------------------------------------------------
            3. UI Update Helpers
         ------------------------------------------------------------- */
-        // data-sync 속성을 가진 요소들의 값을 연동하여 화면에 뿌려주는 함수
         function syncUI(sourceEl) {
             const val = sourceEl.value;
             const syncTargets = sourceEl.getAttribute('data-sync');
@@ -665,12 +661,10 @@
         }
 
         /* -------------------------------------------------------------
-           4. Event Delegation (이벤트 위임 및 접근성 처리)
+           4. Event Delegation
         ------------------------------------------------------------- */
-        // 입력 이벤트 (Input / Textarea)
         document.addEventListener('input', (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-                // 라디오 버튼 제외 텍스트 저장
                 if(e.target.type !== 'radio') {
                     appState.inputs[e.target.id] = e.target.value;
                     saveState();
@@ -679,7 +673,6 @@
             }
         });
 
-        // 라디오 버튼 이벤트 (Focus Type)
         document.addEventListener('change', (e) => {
             if (e.target.classList.contains('focus-radio')) {
                 appState.focusType = e.target.value;
@@ -687,13 +680,10 @@
             }
         });
 
-        // 클릭 이벤트 (스킬 카드 & 타임 블록)
         document.addEventListener('click', (e) => {
-            // 버튼 클릭 매핑
             if(e.target.closest('#btn-print') || e.target.closest('#btn-print-bottom')) window.print();
             if(e.target.closest('#btn-reset')) confirmReset();
 
-            // 스킬 카드 클릭 제어
             const skillCard = e.target.closest('[data-skill-group]');
             if (skillCard) {
                 document.querySelectorAll('[data-skill-group]').forEach(el => {
@@ -714,7 +704,6 @@
                 saveState();
             }
 
-            // 타임 블록 클릭 제어
             const timeBlock = e.target.closest('[data-hour]');
             if (timeBlock) {
                 const hour = parseInt(timeBlock.getAttribute('data-hour'));
@@ -732,7 +721,6 @@
                     icon.classList.replace('text-charcoal-300', 'text-crimson-600');
                 }
 
-                // 카운트 계산 및 동기화
                 let amCount = 0, pmCount = 0;
                 appState.timeBlocks.forEach(h => {
                     if (h >= 9 && h <= 12) amCount++;
@@ -747,7 +735,6 @@
             }
         });
 
-        // 웹 접근성(a11y) - 엔터/스페이스바 키보드 입력 지원
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 const activeEl = document.activeElement;
@@ -759,21 +746,18 @@
         });
 
         /* -------------------------------------------------------------
-           5. Bootstrapping (초기화 및 복원 로직)
+           5. Bootstrapping
         ------------------------------------------------------------- */
         document.addEventListener('DOMContentLoaded', () => {
-            // 날짜 자동 세팅
             const today = new Date();
             const dateStr = `${today.getFullYear()}년 ${String(today.getMonth() + 1).padStart(2, '0')}월 ${String(today.getDate()).padStart(2, '0')}일`;
             document.getElementById('pledge_date').value = dateStr;
             document.getElementById('summary_date_realtime').innerText = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
 
-            // State 로딩 및 복원
             const savedState = localStorage.getItem(APP_STATE_KEY);
             if (savedState) {
                 appState = JSON.parse(savedState);
                 
-                // 1. 텍스트 입력값 복원
                 Object.keys(appState.inputs).forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
@@ -782,21 +766,18 @@
                     }
                 });
 
-                // 2. 스킬 카드 복원
                 if (appState.skillName) {
                     const skillCard = document.querySelector(`[data-skill-name="${appState.skillName}"]`);
                     if (skillCard) skillCard.click();
                 }
 
-                // 3. 포커스 라디오 복원
                 if (appState.focusType) {
                     const radio = document.querySelector(`input[value="${appState.focusType}"]`);
                     if (radio) radio.checked = true;
                 }
 
-                // 4. 타임 블록 복원 (기존 상태 임시 저장 후 트리거)
                 const savedBlocks = [...appState.timeBlocks];
-                appState.timeBlocks = []; // click() 시 토글되므로 비워둠
+                appState.timeBlocks = []; 
                 savedBlocks.forEach(hour => {
                     const block = document.querySelector(`[data-hour="${hour}"]`);
                     if (block) block.click();
@@ -833,7 +814,7 @@
             const confirmed = await showModal('데이터 전체 초기화', '모든 입력 필드와 블록을 초기화하고 저장된 데이터를 완전 삭제하시겠습니까?', true);
             if (confirmed) {
                 localStorage.removeItem(APP_STATE_KEY);
-                location.reload(); // 가장 깔끔한 상태 초기화 방식
+                location.reload(); 
             }
         }
     </script>
