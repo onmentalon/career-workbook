@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#b91c1c">
+  <meta name="description" content="프레디저 흥미유형 미니체크부터 내일의 10분 행동까지 완성하는 진로계획 워크북">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="진로워크북">
+  <title>진로계획설정 2시간 실전 워크북</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    :root {
+      --crimson-50: #fff1f2;
+      --crimson-100: #ffe4e6;
+      --crimson-600: #dc2626;
+      --crimson-700: #b91c1c;
+      --crimson-800: #991b1b;
+      --charcoal-50: #f9fafb;
+      --charcoal-100: #f3f4f6;
+      --charcoal-200: #e5e7eb;
+      --charcoal-400: #9ca3af;
+      --charcoal-600: #4b5563;
+      --charcoal-700: #374151;
+      --charcoal-800: #1f2937;
+      --charcoal-900: #111827;
+      --white: #ffffff;
+      --shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding-bottom: calc(92px + env(safe-area-inset-bottom));
+      background: var(--charcoal-100);
+      color: var(--charcoal-800);
+      font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible,
+    [role="button"]:focus-visible {
+      outline: 3px solid rgba(220, 38, 38, 0.28);
+      outline-offset: 2px;
+    }
+    .hidden { display: none !important; }
+    .shell { width: min(100% - 28px, 880px); margin: 0 auto; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--charcoal-200);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(14px);
+    }
+    .topbar-inner {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .brand img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+    .brand-copy { min-width: 0; }
+    .brand-copy strong { display: block; color: var(--charcoal-900); font-size: 16px; line-height: 1.25; }
+    .brand-copy span { display: block; color: var(--charcoal-600); font-size: 12px; margin-top: 2px; }
+    .save-chip {
+      min-width: 76px;
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid var(--charcoal-200);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--charcoal-600);
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .save-dot { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; }
+    .save-chip.saving .save-dot { background: #f59e0b; }
+    .save-chip.error .save-dot { background: var(--crimson-600); }
+
+    .progress-wrap { padding: 12px 0 10px; background: var(--white); border-bottom: 1px solid var(--charcoal-200); }
+    .progress-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 8px; }
+    .progress-head strong { color: var(--charcoal-900); font-size: 14px; }
+    .progress-head span { color: var(--charcoal-600); font-size: 13px; font-weight: 700; }
+    .progress-track { height: 8px; border-radius: 999px; background: var(--charcoal-200); overflow: hidden; }
+    .progress-bar { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--crimson-700), var(--crimson-600)); transition: width .25s ease; }
+
+    main { padding-top: 22px; }
+    .panel {
+      display: none;
+      border: 1px solid var(--charcoal-200);
+      border-radius: var(--radius);
+      background: var(--white);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .panel.active { display: block; animation: panel-in .2s ease-out; }
+    @keyframes panel-in { from { opacity: .4; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+    .panel-head { padding: 24px 22px 20px; border-bottom: 1px solid var(--charcoal-200); background: linear-gradient(135deg, #fff 0%, var(--crimson-50) 100%); }
+    .step-kicker { margin: 0 0 8px; color: var(--crimson-700); font-size: 13px; font-weight: 900; letter-spacing: .06em; }
+    .panel h1, .panel h2 { margin: 0; color: var(--charcoal-900); line-height: 1.28; }
+    .panel h1 { font-size: clamp(28px, 7vw, 42px); }
+    .panel h2 { font-size: clamp(24px, 6vw, 32px); }
+    .panel-lead { margin: 10px 0 0; color: var(--charcoal-600); font-size: 16px; }
+    .panel-body { padding: 22px; }
+
+    .cover-visual {
+      display: grid;
+      grid-template-columns: 82px 1fr;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .cover-visual img { width: 82px; height: 82px; border-radius: 50%; border: 1px solid #d6bd84; object-fit: cover; }
+    .cover-visual p { margin: 6px 0 0; color: var(--charcoal-600); }
+    .time-map {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 18px 0 24px;
+    }
+    .time-item { padding: 14px; border: 1px solid var(--charcoal-200); border-radius: 14px; background: var(--charcoal-50); }
+    .time-item strong { display: block; color: var(--crimson-700); font-size: 14px; }
+    .time-item span { display: block; margin-top: 3px; color: var(--charcoal-700); font-size: 14px; }
+
+    .section-card { margin-top: 20px; padding: 18px; border: 1px solid var(--charcoal-200); border-radius: 16px; background: var(--white); }
+    .section-card.soft { background: var(--charcoal-50); }
+    .section-title { margin: 0 0 6px; color: var(--charcoal-900); font-size: 18px; line-height: 1.35; }
+    .section-desc { margin: 0 0 16px; color: var(--charcoal-600); font-size: 14px; }
+    .field { margin-top: 16px; }
+    .field:first-child { margin-top: 0; }
+    label, .field-label { display: block; margin-bottom: 7px; color: var(--charcoal-800); font-size: 14px; font-weight: 800; }
+    .required { color: var(--crimson-700); }
+    input[type="text"], input[type="time"], textarea, select {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      background: var(--white);
+      color: var(--charcoal-900);
+      padding: 12px 14px;
+      font-size: 16px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    textarea { min-height: 104px; resize: vertical; line-height: 1.55; }
+    input:focus, textarea:focus, select:focus { border-color: var(--crimson-600); box-shadow: 0 0 0 3px rgba(220, 38, 38, .1); outline: 0; }
+    .hint { display: block; margin-top: 6px; color: var(--charcoal-600); font-size: 13px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+
+    .choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .choice-card {
+      position: relative;
+      min-height: 112px;
+      padding: 15px 72px 15px 15px;
+      border: 2px solid var(--charcoal-200);
+      border-radius: 15px;
+      background: var(--white);
+      color: var(--charcoal-800);
+      text-align: left;
+      transition: border-color .15s, background .15s, transform .15s;
+    }
+    .choice-card:active { transform: scale(.985); }
+    .choice-card[aria-pressed="true"] { border-color: var(--crimson-600); background: var(--crimson-50); }
+    .choice-card strong { display: block; color: var(--charcoal-900); font-size: 16px; }
+    .choice-card span { display: block; margin-top: 5px; color: var(--charcoal-600); font-size: 13px; line-height: 1.45; }
+    .choice-card[aria-pressed="true"] strong { color: var(--crimson-700); }
+    .choice-card[data-rank]::after {
+      content: attr(data-rank) "순위";
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      min-width: 48px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: var(--crimson-700);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 900;
+      text-align: center;
+    }
+    .selection-result { margin: 12px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--charcoal-100); color: var(--charcoal-700); font-size: 14px; font-weight: 700; }
+
+    .prediger-tools { margin: 14px 0 16px; padding: 15px; border: 1px solid #dbeafe; border-radius: 14px; background: #eff6ff; }
+    .prediger-tools p { margin: 0 0 11px; color: #1e3a8a; font-size: 14px; }
+    .prediger-status { display: inline-flex; align-items: center; min-height: 26px; margin-left: 6px; padding: 3px 9px; border-radius: 999px; background: var(--white); color: #1d4ed8; font-size: 12px; font-weight: 900; vertical-align: middle; }
+    .prediger-status.complete { background: #dcfce7; color: #166534; }
+
+    .quiz-dialog { width: min(94vw, 680px); max-height: min(90vh, 760px); overflow: auto; }
+    .quiz-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .quiz-head-copy p { margin: 5px 0 0; color: var(--charcoal-600); font-size: 14px; }
+    .icon-btn { flex: 0 0 44px; width: 44px; height: 44px; border: 1px solid var(--charcoal-200); border-radius: 50%; background: var(--white); color: var(--charcoal-700); font-size: 22px; line-height: 1; }
+    .quiz-progress-head { display: flex; justify-content: space-between; gap: 12px; margin-top: 20px; color: var(--charcoal-700); font-size: 13px; font-weight: 800; }
+    .quiz-progress-track { height: 8px; margin-top: 7px; overflow: hidden; border-radius: 999px; background: var(--charcoal-200); }
+    .quiz-progress-bar { height: 100%; width: 25%; border-radius: inherit; background: linear-gradient(90deg, #2563eb, #16a34a); transition: width .2s ease; }
+    .quiz-question { margin: 22px 0 13px; color: var(--charcoal-900); font-size: 20px; line-height: 1.45; }
+    .quiz-options { display: grid; gap: 10px; }
+    .quiz-option { width: 100%; min-height: 68px; display: grid; grid-template-columns: 36px 1fr; gap: 11px; align-items: center; padding: 12px 14px; border: 2px solid var(--charcoal-200); border-radius: 14px; background: var(--white); color: var(--charcoal-800); text-align: left; }
+    .quiz-option:hover { background: var(--charcoal-50); }
+    .quiz-option[aria-pressed="true"] { border-color: var(--crimson-600); background: var(--crimson-50); }
+    .quiz-option-number { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--charcoal-100); color: var(--charcoal-700); font-size: 14px; font-weight: 900; }
+    .quiz-option[aria-pressed="true"] .quiz-option-number { background: var(--crimson-700); color: var(--white); }
+    .quiz-option strong { display: block; color: var(--charcoal-900); font-size: 15px; }
+    .quiz-option span { display: block; margin-top: 2px; color: var(--charcoal-600); font-size: 14px; line-height: 1.45; }
+    .quiz-result { margin-top: 20px; padding: 20px; border: 2px solid #bbf7d0; border-radius: 16px; background: #f0fdf4; }
+    .quiz-result small { color: #166534; font-weight: 900; }
+    .quiz-result h3 { margin: 4px 0 6px; color: #14532d; font-size: 25px; }
+    .quiz-result p { margin: 7px 0 0; color: #365247; }
+    .quiz-score-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; }
+    .quiz-score-list span { padding: 5px 9px; border-radius: 999px; background: var(--white); border: 1px solid #bbf7d0; color: #166534; font-size: 12px; font-weight: 800; }
+
+    .prompt-box { padding: 16px; border-left: 4px solid var(--crimson-600); border-radius: 10px; background: var(--crimson-50); }
+    .prompt-box p { margin: 0; color: var(--charcoal-800); font-size: 14px; }
+    .inline-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    .btn {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-weight: 800;
+      font-size: 14px;
+      transition: background .15s, border-color .15s, transform .15s;
+    }
+    .btn:active { transform: scale(.985); }
+    .btn-primary { background: var(--crimson-700); color: var(--white); }
+    .btn-primary:hover { background: var(--crimson-800); }
+    .btn-secondary { border-color: var(--charcoal-200); background: var(--white); color: var(--charcoal-700); }
+    .btn-secondary:hover { background: var(--charcoal-100); }
+    .btn-dark { background: var(--charcoal-900); color: var(--white); }
+    .btn-danger { border-color: var(--crimson-100); background: var(--crimson-50); color: var(--crimson-700); }
+    .btn-wide { width: 100%; }
+
+    details { margin-top: 14px; border: 1px solid var(--charcoal-200); border-radius: 14px; background: var(--charcoal-50); }
+    summary { min-height: 48px; padding: 12px 14px; color: var(--charcoal-800); font-size: 14px; font-weight: 800; cursor: pointer; }
+    details .details-body { padding: 0 14px 14px; }
+
+    .vision-card { padding: 15px; border: 1px solid var(--charcoal-200); border-radius: 15px; background: var(--charcoal-50); }
+    .vision-card h3 { margin: 0 0 10px; color: var(--charcoal-900); font-size: 16px; }
+    .vision-card input { background: var(--white); }
+
+    .slot-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .slot-btn {
+      min-height: 68px;
+      border: 2px solid var(--charcoal-200);
+      border-radius: 14px;
+      background: var(--white);
+      color: var(--charcoal-700);
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .slot-btn[aria-pressed="true"] { border-color: var(--crimson-600); background: var(--crimson-50); color: var(--crimson-700); }
+
+    .summary-page { display: none; margin-top: 22px; border: 1px solid var(--charcoal-200); border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); overflow: hidden; }
+    .summary-page.visible { display: block; }
+    .summary-header { padding: 28px 22px; background: var(--charcoal-900); color: var(--white); text-align: center; }
+    .summary-header small { display: block; color: #fecdd3; font-weight: 800; letter-spacing: .08em; }
+    .summary-header h2 { margin: 5px 0 0; font-size: 28px; }
+    .summary-content { padding: 22px; }
+    .summary-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; padding: 12px 14px; border-radius: 12px; background: var(--charcoal-100); font-size: 14px; font-weight: 800; }
+    .summary-section { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--charcoal-200); }
+    .summary-section h3 { margin: 0 0 10px; color: var(--crimson-700); font-size: 16px; }
+    .summary-section p { margin: 5px 0; color: var(--charcoal-800); font-size: 14px; }
+    .summary-section strong { color: var(--charcoal-900); }
+    .summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .summary-box { padding: 12px; border-radius: 12px; background: var(--charcoal-50); border: 1px solid var(--charcoal-200); }
+    .pledge-box { margin-top: 18px; padding: 18px; border: 2px solid var(--crimson-700); border-radius: 14px; background: var(--crimson-50); text-align: center; }
+    .pledge-box p { margin: 0; color: var(--charcoal-900); font-size: 16px; font-weight: 800; }
+    .summary-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+    .bottom-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 40;
+      padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+      border-top: 1px solid var(--charcoal-200);
+      background: rgba(255, 255, 255, .97);
+      backdrop-filter: blur(14px);
+    }
+    .bottom-nav-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    dialog { width: min(92vw, 440px); border: 0; border-radius: 20px; padding: 0; box-shadow: 0 24px 80px rgba(0,0,0,.25); }
+    dialog::backdrop { background: rgba(17, 24, 39, .58); }
+    .dialog-body { padding: 22px; }
+    .dialog-body h2 { margin: 0; color: var(--charcoal-900); font-size: 22px; }
+    .dialog-body p, .dialog-body ol { color: var(--charcoal-700); font-size: 15px; }
+    .dialog-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(90px + env(safe-area-inset-bottom));
+      z-index: 100;
+      transform: translate(-50%, 20px);
+      width: max-content;
+      max-width: calc(100vw - 32px);
+      padding: 11px 16px;
+      border-radius: 999px;
+      background: var(--charcoal-900);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 800;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s, transform .18s;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .privacy-note { margin: 18px 0 0; padding: 14px; border-radius: 12px; background: #eff6ff; color: #1e3a8a; font-size: 13px; }
+
+    @media (max-width: 620px) {
+      .shell { width: min(100% - 20px, 880px); }
+      .brand-copy strong { font-size: 14px; }
+      .brand-copy span { display: none; }
+      .panel-head, .panel-body, .summary-content { padding-left: 17px; padding-right: 17px; }
+      .grid-2, .grid-4, .summary-grid { grid-template-columns: 1fr; }
+      .choice-grid { grid-template-columns: 1fr; }
+      .choice-card { min-height: 94px; }
+      .quiz-dialog { width: calc(100vw - 16px); max-height: calc(100vh - 24px); }
+      .quiz-option { grid-template-columns: 34px 1fr; padding: 11px 12px; }
+      .quiz-question { font-size: 18px; }
+      .dialog-actions.quiz-actions { display: grid; grid-template-columns: 1fr 1fr; }
+      .dialog-actions.quiz-actions .btn { width: 100%; }
+      .time-map { grid-template-columns: 1fr; }
+      .slot-grid { grid-template-columns: 1fr; }
+      .slot-btn { min-height: 54px; }
+      .summary-actions { flex-direction: column; }
+      .summary-actions .btn { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+    }
+
+    @page { size: A4; margin: 12mm; }
+    @media print {
+      body { padding: 0; background: #fff; color: #111827; }
+      .no-print, .topbar, .progress-wrap, .bottom-nav, dialog, .toast { display: none !important; }
+      .shell { width: 100%; max-width: none; margin: 0; }
+      main { padding: 0; }
+      .panel { display: block; box-shadow: none; border: 0; break-after: page; }
+      .panel-head { background: #fff; padding: 0 0 10mm; }
+      .panel-body { padding: 0; }
+      .section-card, .vision-card { break-inside: avoid; box-shadow: none; }
+      .summary-page { display: block; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+      .summary-header { background: #fff !important; color: #111827; border-bottom: 2px solid #111827; padding: 0 0 8mm; }
+      .summary-header small { color: #991b1b; }
+      .summary-content { padding: 7mm 0 0; }
+      .summary-section { margin-top: 4mm; padding-top: 4mm; }
+      .summary-section p, .summary-box, .summary-meta { font-size: 10pt; }
+      .pledge-box { margin-top: 5mm; padding: 5mm; }
+      body.print-summary .panel { display: none !important; }
+      body.print-summary .summary-page { display: block !important; }
+      body.print-all .panel { display: block !important; }
+      body.print-all .summary-page { break-before: page; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar no-print">
+    <div class="shell topbar-inner">
+      <div class="brand">
+        <img src="logo.png" alt="리START 청년도전 로고">
+        <div class="brand-copy">
+          <strong>진로계획설정 실전 워크북</strong>
+          <span>2시간 통합과정 · 모바일 작성형</span>
+        </div>
+      </div>
+      <div id="save_status" class="save-chip" role="status" aria-live="polite">
+        <span class="save-dot" aria-hidden="true"></span><span>저장됨</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="progress-wrap no-print">
+    <div class="shell">
+      <div class="progress-head">
+        <strong id="progress_title">시작하기</strong>
+        <span id="progress_text">준비 · 0%</span>
+      </div>
+      <div class="progress-track" aria-hidden="true"><div id="progress_bar" class="progress-bar"></div></div>
+    </div>
+  </div>
+
+  <main class="shell">
+    <section class="panel active" data-step="0" aria-labelledby="start_title">
+      <div class="panel-head">
+        <p class="step-kicker">청년도전지원사업 · 2시간 통합과정</p>
+        <h1 id="start_title">진로계획설정<br>실전 워크북</h1>
+        <p class="panel-lead">강점을 발견하고, 목표를 세우고, 내일의 첫 행동까지 완성합니다.</p>
+      </div>
+      <div class="panel-body">
+        <div class="cover-visual">
+          <img src="logo.png" alt="">
+          <div>
+            <strong>오늘의 최종 결과물</strong>
+            <p>작성한 내용이 마지막에 한 장의 진로계획서로 자동 정리됩니다.</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="participant_name">성명 <span class="required">*</span></label>
+            <input type="text" id="participant_name" autocomplete="name" placeholder="성명을 입력해 주세요">
+          </div>
+          <div class="field">
+            <label for="participant_team">소속 조</label>
+            <input type="text" id="participant_team" placeholder="예: 2조">
+          </div>
+        </div>
+
+        <div class="time-map" aria-label="2시간 운영 흐름">
+          <div class="time-item"><strong>00~30분</strong><span>강점 발견</span></div>
+          <div class="time-item"><strong>30~50분</strong><span>역량 문장 완성</span></div>
+          <div class="time-item"><strong>50~60분</strong><span>휴식</span></div>
+          <div class="time-item"><strong>60~98분</strong><span>목표와 실행 경로</span></div>
+          <div class="time-item"><strong>98~120분</strong><span>실행 환경·10분 행동·동료 응원</span></div>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-wide" data-go="1">작성 시작하기</button>
+        <p class="privacy-note">입력 내용은 현재 사용 중인 기기에만 자동 저장되며 서버로 전송되지 않습니다. 공용 기기에서는 종료 전에 초기화해 주세요.</p>
+      </div>
+    </section>
+
+    <section class="panel" data-step="1" aria-labelledby="step1_title" hidden>
+      <div class="panel-head">
+        <p class="step-kicker">STEP 1 · 00~30분</p>
+        <h2 id="step1_title">나의 강점 발견하기</h2>
+        <p class="panel-lead">참여 과정의 작은 변화와 프레디저 결과를 역량 언어로 연결합니다.</p>
+      </div>
+      <div class="panel-body">
+        <div class="section-card soft">
+          <h3 class="section-title">나의 찬란한 변화 발견하기</h3>
+          <p class="section-desc">이 과정에 참여하면서 이전보다 꾸준히 하게 된 일이나 새롭게 시도한 작은 행동은 무엇인가요?</p>
+          <label for="small_win">내가 만든 작은 변화 <span class="required">*</span></label>
+          <textarea id="small_win" placeholder="예: 정해진 시간에 참여하기, 배운 내용을 한 번 실천해보기, 먼저 질문하거나 대화해보기"></textarea>
+        </div>
+
+        <fieldset class="section-card">
+          <legend class="section-title">프레디저 4유형에서 나의 강점 2가지 선택</legend>
+          <p class="section-desc">나에게 가까운 유형을 1순위와 2순위로 선택하세요. 선택한 카드를 다시 누르면 해제할 수 있습니다.</p>
+          <div class="prediger-tools">
+            <p>잘 모르겠다면 4문항에 답해보세요. 검사 결과의 1·2순위가 먼저 선택되며, 이후 직접 수정할 수 있습니다.<span id="prediger_quiz_status" class="prediger-status">검사 전</span></p>
+            <button type="button" id="start_prediger_quiz" class="btn btn-primary">내 프레디저 유형 3분 검사하기</button>
+          </div>
+          <div class="choice-grid" id="strength_choices">
+            <button type="button" class="choice-card" data-strength="사람" data-strength-name="대인관계 및 협업 조율" aria-pressed="false">
+              <strong>사람 · People</strong><span>고객 공감, 의견 조율, 팀워크 촉진</span>
+            </button>
+            <button type="button" class="choice-card" data-strength="자료" data-strength-name="정보 구조화 및 프로세스 관리" aria-pressed="false">
+              <strong>자료 · Data</strong><span>기한 준수, 정보 분류, 과정 관리</span>
+            </button>
+            <button type="button" class="choice-card" data-strength="사물" data-strength-name="기술 실행 및 환경 최적화" aria-pressed="false">
+              <strong>사물 · Things</strong><span>도구 활용, 현장 대응, 품질 관리</span>
+            </button>
+            <button type="button" class="choice-card" data-strength="사고" data-strength-name="기획 설계 및 해결책 도출" aria-pressed="false">
+              <strong>사고 · Ideas</strong><span>아이디어 제안, 문제 분석, 기획 설계</span>
+            </button>
+          </div>
+          <p id="strength_result" class="selection-result" aria-live="polite">1순위와 2순위가 여기에 표시됩니다.</p>
+        </fieldset>
+      </div>
+    </section>
+
+    <section class="panel" data-step="2" aria-labelledby="step2_title" hidden>
+      <div class="panel-head">
+        <p class="step-kicker">STEP 2 · 30~50분</p>
+        <h2 id="step2_title">한 줄 역량 문장 완성하기</h2>
+        <p class="panel-lead">실제 경험을 바탕으로 나를 설명하는 역량 증명서를 만듭니다.</p>
+      </div>
+      <div class="panel-body">
+        <div class="prompt-box">
+          <p id="ai_prompt_text">나의 강점 유형은 [선택 유형]이고, 실제 행동 경험은 [나의 작은 변화]입니다. 과장하지 말고 자기소개서에 활용할 수 있는 역량 문장 2개를 작성해 주세요. 각 문장은 행동과 결과가 드러나도록 60자 안팎으로 작성해 주세요.</p>
+          <div class="inline-actions">
+            <button type="button" id="copy_prompt" class="btn btn-secondary">AI 프롬프트 복사</button>
+          </div>
+          <span class="hint">이름, 연락처 등 개인정보는 AI에 입력하지 마세요.</span>
+        </div>
+
+        <div class="section-card">
+          <div class="field">
+            <label for="capability_statement">나의 한 줄 역량 증명서 <span class="required">*</span></label>
+            <textarea id="capability_statement" placeholder="예: 정해진 일정을 꾸준히 지키며 맡은 과업을 끝까지 실행하는 책임감이 있습니다."></textarea>
+          </div>
+          <div class="field">
+            <label for="peer_strength_feedback">동료가 발견한 나의 강점</label>
+            <input type="text" id="peer_strength_feedback" placeholder="상대가 들은 강점을 한 문장으로 적어주세요">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-step="3" aria-labelledby="step3_title" hidden>
+      <div class="panel-head">
+        <p class="step-kicker">STEP 3 · 60~78분</p>
+        <h2 id="step3_title">미래 목표 설정하기</h2>
+        <p class="panel-lead">아이디어를 참고해 1년 후의 완료된 모습을 네 영역으로 구체화합니다.</p>
+      </div>
+      <div class="panel-body">
+        <div class="section-card soft">
+          <h3 class="section-title">아이디어 시장 메모</h3>
+          <p class="section-desc">조별 대화에서 마음에 든 아이디어 두 가지만 기록합니다.</p>
+          <div class="grid-2">
+            <div class="field"><label for="market_idea_1">아이디어 1</label><input type="text" id="market_idea_1" placeholder="예: AI 포트폴리오 만들기"></div>
+            <div class="field"><label for="market_idea_2">아이디어 2</label><input type="text" id="market_idea_2" placeholder="예: 현직자 인터뷰하기"></div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">AI 시대형 4대 비전</h3>
+          <p class="section-desc">숫자나 완료 기준을 넣어 짧은 문장으로 작성해 주세요.</p>
+          <div class="grid-4">
+            <div class="vision-card"><h3>1. AI 융합 역량</h3><input type="text" id="vision_ai" placeholder="예: AI로 포트폴리오 3건을 완성했다"></div>
+            <div class="vision-card"><h3>2. 몰입 루틴</h3><input type="text" id="vision_routine" placeholder="예: 주 4회 준비 루틴을 지켰다"></div>
+            <div class="vision-card"><h3>3. 휴먼 네트워크</h3><input type="text" id="vision_network" placeholder="예: 현직자 5명과 연결되었다"></div>
+            <div class="vision-card"><h3>4. 스마트 커리어 액션</h3><input type="text" id="vision_action" placeholder="예: 지원서 10건을 제출했다"></div>
+          </div>
+          <details>
+            <summary>선택 작성 · 목표를 떠올리게 하는 장면이나 키워드</summary>
+            <div class="details-body">
+              <label for="vision_image">시각화 키워드</label>
+              <input type="text" id="vision_image" placeholder="예: 합격 메일을 확인하며 웃는 모습">
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-step="4" aria-labelledby="step4_title" hidden>
+      <div class="panel-head">
+        <p class="step-kicker">STEP 4 · 78~98분</p>
+        <h2 id="step4_title">실행 경로 설계하기</h2>
+        <p class="panel-lead">1년 목표를 수료 전·후에 실행할 디딤돌 행동으로 바꿉니다.</p>
+      </div>
+      <div class="panel-body">
+        <div class="section-card">
+          <div class="field">
+            <label for="milestone_before">수료 전 핵심 행동 <span class="required">*</span></label>
+            <textarea id="milestone_before" placeholder="예: 10월 15일까지 채용공고 10개를 분석하고 관심 직무 2개를 정한다."></textarea>
+            <span class="hint">행동 + 마감일 + 확인 방법이 드러나도록 작성해 주세요.</span>
+          </div>
+          <div class="field">
+            <label for="milestone_after">수료 후 첫 달 집중 행동 <span class="required">*</span></label>
+            <textarea id="milestone_after" placeholder="예: 수료 후 30일 동안 매주 지원서 2건을 제출하고 기록표에 체크한다."></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-step="5" aria-labelledby="step5_title" hidden>
+      <div class="panel-head">
+        <p class="step-kicker">STEP 5 · 98~108분</p>
+        <h2 id="step5_title">실행 환경 설계하기</h2>
+        <p class="panel-lead">집중이 잘되는 시간과 취약 시간을 알고, 실행을 지키는 환경을 만듭니다.</p>
+      </div>
+      <div class="panel-body">
+        <fieldset class="section-card">
+          <legend class="section-title">집중이 가장 잘되는 시간</legend>
+          <div class="slot-grid" id="energy_choices">
+            <button type="button" class="slot-btn" data-energy="오전" aria-pressed="false">오전<br>09~12시</button>
+            <button type="button" class="slot-btn" data-energy="오후" aria-pressed="false">오후<br>13~17시</button>
+            <button type="button" class="slot-btn" data-energy="저녁" aria-pressed="false">저녁<br>18시 이후</button>
+          </div>
+        </fieldset>
+
+        <div class="section-card soft">
+          <div class="grid-2">
+            <div class="field"><label for="vulnerable_start">취약 시간 시작</label><input type="time" id="vulnerable_start"></div>
+            <div class="field"><label for="vulnerable_end">취약 시간 종료</label><input type="time" id="vulnerable_end"></div>
+          </div>
+          <div class="field"><label for="vulnerable_trigger">나를 방해하는 요인</label><input type="text" id="vulnerable_trigger" placeholder="예: 휴대전화 알림, 피로, 계획 없는 인터넷 사용"></div>
+          <div class="field"><label for="defense_strategy">취약 시간 방어 전략 <span class="required">*</span></label><textarea id="defense_strategy" placeholder="예: 14시에는 휴대전화를 가방에 넣고 도서관에서 지원서 한 문단만 작성한다."></textarea></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-step="6" aria-labelledby="step6_title" hidden>
+      <div class="panel-head">
+        <p class="step-kicker">STEP 6 · 108~114분</p>
+        <h2 id="step6_title">내일의 첫 행동 선언하기</h2>
+        <p class="panel-lead">부담 없이 시작할 수 있는 10분 행동으로 계획을 마무리합니다.</p>
+      </div>
+      <div class="panel-body">
+        <div class="section-card">
+          <div class="field"><label for="ten_min_action">내일 시작할 10분 행동 <span class="required">*</span></label><input type="text" id="ten_min_action" placeholder="예: 관심 기업 채용공고 1개 읽기"></div>
+          <div class="grid-2">
+            <div class="field"><label for="action_time">실행 시각 <span class="required">*</span></label><input type="time" id="action_time"></div>
+            <div class="field"><label for="action_proof">완료 확인 방법</label><input type="text" id="action_proof" placeholder="예: 일정표에 체크하기"></div>
+          </div>
+          <div class="field"><label for="peer_message">동료 응원 문장</label><input type="text" id="peer_message" placeholder="예: 네 강점이면 충분히 시작할 수 있어!"></div>
+          <div class="field"><label for="signature">나의 서명 <span class="required">*</span></label><input type="text" id="signature" placeholder="이름을 입력해 실행을 약속합니다"></div>
+        </div>
+        <button type="button" id="complete_workbook" class="btn btn-primary btn-wide">원페이지 진로계획서 완성하기</button>
+        <div class="section-card soft" style="margin-top:16px;">
+          <h3 class="section-title">114~120분 · 조별 실행 선언과 동료 응원</h3>
+          <p class="section-desc">핵심 강점 1개와 내일의 10분 행동을 30초 안에 말합니다. 동료에게 받은 응원 한 문장을 위 입력란에 기록해 주세요.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="summary_page" class="summary-page" aria-labelledby="summary_title">
+      <div class="summary-header">
+        <small>CAREER ACTION MAP</small>
+        <h2 id="summary_title">원페이지 진로계획서</h2>
+      </div>
+      <div class="summary-content">
+        <div class="summary-meta">
+          <span>성명: <b data-out="participant_name">_____</b></span>
+          <span>소속: <b data-out="participant_team">_____</b></span>
+          <span>작성일: <b id="summary_date">_____</b></span>
+        </div>
+
+        <div class="summary-section">
+          <h3>1. 나의 변화와 강점</h3>
+          <div class="summary-box">
+            <p><strong>찬란한 변화:</strong> <span data-out="small_win">입력 대기 중</span></p>
+            <p><strong>핵심 강점:</strong> <span id="summary_strength">선택 대기 중</span></p>
+            <p><strong>역량 증명서:</strong> <span data-out="capability_statement">입력 대기 중</span></p>
+          </div>
+        </div>
+
+        <div class="summary-section">
+          <h3>2. 1년 후 4대 비전</h3>
+          <div class="summary-grid">
+            <div class="summary-box"><strong>AI 융합 역량</strong><p data-out="vision_ai">입력 대기 중</p></div>
+            <div class="summary-box"><strong>몰입 루틴</strong><p data-out="vision_routine">입력 대기 중</p></div>
+            <div class="summary-box"><strong>휴먼 네트워크</strong><p data-out="vision_network">입력 대기 중</p></div>
+            <div class="summary-box"><strong>스마트 커리어 액션</strong><p data-out="vision_action">입력 대기 중</p></div>
+          </div>
+        </div>
+
+        <div class="summary-section">
+          <h3>3. 실행 경로</h3>
+          <div class="summary-box">
+            <p><strong>수료 전:</strong> <span data-out="milestone_before">입력 대기 중</span></p>
+            <p><strong>수료 후 첫 달:</strong> <span data-out="milestone_after">입력 대기 중</span></p>
+          </div>
+        </div>
+
+        <div class="summary-section">
+          <h3>4. 실행 환경</h3>
+          <div class="summary-box">
+            <p><strong>집중 시간:</strong> <span id="summary_energy">선택 대기 중</span></p>
+            <p><strong>취약 시간:</strong> <span id="summary_vulnerable">입력 대기 중</span></p>
+            <p><strong>방어 전략:</strong> <span data-out="defense_strategy">입력 대기 중</span></p>
+          </div>
+        </div>
+
+        <div class="pledge-box">
+          <p>나는 내일 <span data-out="action_time">___</span>에<br><span data-out="ten_min_action">_______________</span>을(를)<br>10분 동안 실행하겠습니다.</p>
+          <p style="margin-top:10px;font-size:14px;">확인 방법: <span data-out="action_proof">입력 대기 중</span> · 서명: <span data-out="signature">_____</span></p>
+        </div>
+
+        <div class="summary-section">
+          <h3>동료의 응원</h3>
+          <p data-out="peer_message">함께 시작해 봅시다!</p>
+        </div>
+
+        <div class="summary-actions no-print">
+          <button type="button" id="print_summary" class="btn btn-primary">원페이지 PDF 저장</button>
+          <button type="button" id="print_all" class="btn btn-secondary">전체 워크시트 인쇄</button>
+          <button type="button" id="back_to_edit" class="btn btn-secondary">내용 수정하기</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="inline-actions no-print" style="justify-content:center;margin:20px 0 8px;">
+      <button type="button" id="install_app" class="btn btn-dark hidden">앱으로 설치</button>
+      <button type="button" id="ios_help" class="btn btn-secondary hidden">아이폰 설치 안내</button>
+      <button type="button" id="reset_app" class="btn btn-danger">입력 내용 초기화</button>
+    </div>
+  </main>
+
+  <nav class="bottom-nav no-print" aria-label="워크북 단계 이동">
+    <div class="shell bottom-nav-inner">
+      <button type="button" id="prev_step" class="btn btn-secondary">이전</button>
+      <button type="button" id="next_step" class="btn btn-primary">다음 단계</button>
+    </div>
+  </nav>
+
+  <dialog id="prediger_quiz_dialog" class="quiz-dialog" aria-labelledby="prediger_quiz_title">
+    <div class="dialog-body">
+      <div class="quiz-head">
+        <div class="quiz-head-copy">
+          <h2 id="prediger_quiz_title">프레디저 흥미유형 미니체크</h2>
+          <p>각 문항에서 나에게 가장 가까운 답 하나를 선택하세요.</p>
+        </div>
+        <button type="button" class="icon-btn" data-close-dialog aria-label="검사 닫기">×</button>
+      </div>
+
+      <div id="prediger_quiz_questions">
+        <div class="quiz-progress-head"><span id="quiz_progress_label">1/4 문항</span><span id="quiz_progress_percent">25%</span></div>
+        <div class="quiz-progress-track" aria-hidden="true"><div id="quiz_progress_bar" class="quiz-progress-bar"></div></div>
+        <h3 id="quiz_question" class="quiz-question"></h3>
+        <div id="quiz_options" class="quiz-options" role="group" aria-labelledby="quiz_question"></div>
+        <div class="dialog-actions quiz-actions">
+          <button type="button" id="quiz_prev" class="btn btn-secondary">이전 문항</button>
+          <button type="button" id="quiz_next" class="btn btn-primary">다음 문항</button>
+        </div>
+      </div>
+
+      <div id="prediger_quiz_result" class="hidden">
+        <div class="quiz-result" aria-live="polite">
+          <small>검사 완료 · 1·2순위가 자동 선택되었습니다</small>
+          <h3 id="quiz_result_title"></h3>
+          <p id="quiz_result_description"></p>
+          <p id="quiz_result_secondary" class="hidden"></p>
+          <div id="quiz_score_list" class="quiz-score-list"></div>
+        </div>
+        <p class="hint">교육활동용 간이 체크 결과입니다. 결과가 나와 다르게 느껴지면 검사를 닫은 뒤 유형을 직접 변경할 수 있습니다.</p>
+        <div class="dialog-actions quiz-actions">
+          <button type="button" id="quiz_restart" class="btn btn-secondary">다시 검사하기</button>
+          <button type="button" id="quiz_finish" class="btn btn-primary">결과 확인하고 돌아가기</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="reset_dialog" aria-labelledby="reset_title">
+    <div class="dialog-body">
+      <h2 id="reset_title">입력 내용을 초기화할까요?</h2>
+      <p>현재 기기에 저장된 모든 작성 내용이 삭제됩니다. 삭제한 내용은 복구할 수 없습니다.</p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-secondary" data-close-dialog>취소</button>
+        <button type="button" id="confirm_reset" class="btn btn-danger">전체 삭제</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="install_dialog" aria-labelledby="install_title">
+    <div class="dialog-body">
+      <h2 id="install_title">아이폰 홈 화면에 추가하기</h2>
+      <ol>
+        <li>Safari 하단의 공유 버튼을 누릅니다.</li>
+        <li>메뉴에서 ‘홈 화면에 추가’를 선택합니다.</li>
+        <li>오른쪽 위 ‘추가’를 누릅니다.</li>
+      </ol>
+      <div class="dialog-actions"><button type="button" class="btn btn-primary" data-close-dialog>확인</button></div>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const STORAGE_KEY = 'career_workbook_2h_v3';
+      const OLD_STORAGE_KEY = 'workbook_app_state_v2';
+      const MAX_STEP = 6;
+      const stepTitles = ['시작하기', '나의 강점 발견', '역량 문장 완성', '미래 목표 설정', '실행 경로 설계', '실행 환경 설계', '첫 행동 선언'];
+      const defaultQuizState = { answers: [], scores: {}, completed: false, primary: '', secondary: '', tieAnswer: '' };
+      const defaultState = { currentStep: 0, inputs: {}, strengths: [], strength: '', strengthName: '', secondaryStrength: '', secondaryStrengthName: '', energy: '', predigerQuiz: { ...defaultQuizState } };
+      let state = { ...defaultState, inputs: {}, strengths: [], predigerQuiz: { ...defaultQuizState, answers: [], scores: {} } };
+      let saveTimer;
+      let toastTimer;
+      let deferredPrompt = null;
+      let quizStep = 0;
+      let quizTieTypes = [];
+      let quizTieRank = 0;
+      let quizResolvedPrimary = '';
+
+      const predigerTypes = {
+        자료: { english: 'Data', strengthName: '정보 구조화 및 프로세스 관리', description: '정보를 수집하고 분석하며 체계적으로 정리하는 활동에 관심이 높습니다.' },
+        사물: { english: 'Things', strengthName: '기술 실행 및 환경 최적화', description: '도구를 활용해 직접 만들고 작동시키며 현장에서 해결하는 활동에 관심이 높습니다.' },
+        사고: { english: 'Ideas', strengthName: '기획 설계 및 해결책 도출', description: '새로운 아이디어를 기획하고 문제의 해결책을 탐구하는 활동에 관심이 높습니다.' },
+        사람: { english: 'People', strengthName: '대인관계 및 협업 조율', description: '사람과 소통하고 협력하며 도움을 제공하는 활동에 관심이 높습니다.' }
+      };
+
+      const predigerQuestions = [
+        {
+          question: '1. 내가 다른 사람보다 일에서 더 효율적인 부분은 무엇인가요?',
+          options: [
+            { type: '자료', text: '정보를 수집·분석하고 체계적으로 정리하거나 수치를 다루는 일' },
+            { type: '사물', text: '무언가를 직접 만들고 작동시키며 현장의 문제를 해결하는 일' },
+            { type: '사고', text: '새로운 아이디어를 내고 기획하거나 해결책을 구상하는 일' },
+            { type: '사람', text: '사람과 소통하고 배려하며 관계와 협력을 만들어가는 일' }
+          ]
+        },
+        {
+          question: '2. 다른 사람의 업무를 도울 때 나의 방식과 가장 가까운 것은 무엇인가요?',
+          options: [
+            { type: '자료', text: '필요한 정보와 기준을 찾아 정확하고 체계적으로 알려준다' },
+            { type: '사물', text: '직접 행동하며 실제 작업이나 문제 해결을 함께 해준다' },
+            { type: '사고', text: '새로운 관점과 창의적인 아이디어를 제안한다' },
+            { type: '사람', text: '상대의 이야기를 듣고 격려하며 함께할 사람을 연결한다' }
+          ]
+        },
+        {
+          question: '3. 팀에서 과제나 결과물을 만들 때 내가 주로 기여하는 역할은 무엇인가요?',
+          options: [
+            { type: '자료', text: '자료 조사, 수치 계산, 일정 정리와 설계를 맡는다' },
+            { type: '사물', text: '제작과 실행을 맡고 과정과 품질을 점검한다' },
+            { type: '사고', text: '새로운 콘셉트와 아이디어, 해결 방법을 제시한다' },
+            { type: '사람', text: '토론을 돕고 의견을 조율하며 사람들을 연결한다' }
+          ]
+        },
+        {
+          question: '4. 가장 큰 성취감을 느끼는 순간은 언제인가요?',
+          options: [
+            { type: '자료', text: '복잡한 정보를 정확하게 분석하고 보기 좋게 정리했을 때' },
+            { type: '사물', text: '직접 만든 것이 제대로 작동하고 결과가 완성되었을 때' },
+            { type: '사고', text: '새로운 아이디어나 창의적인 해결책이 인정받았을 때' },
+            { type: '사람', text: '다른 사람을 도와 함께 성과를 만들고 좋은 관계가 형성되었을 때' }
+          ]
+        }
+      ];
+
+      const $ = (selector, scope = document) => scope.querySelector(selector);
+      const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
+
+      function showToast(message) {
+        const toast = $('#toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+      }
+
+      function setSaveStatus(type, text) {
+        const status = $('#save_status');
+        status.classList.remove('saving', 'error');
+        if (type) status.classList.add(type);
+        status.querySelector('span:last-child').textContent = text;
+      }
+
+      function saveState() {
+        setSaveStatus('saving', '저장 중');
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            setSaveStatus('', '저장됨');
+          } catch (error) {
+            setSaveStatus('error', '저장 실패');
+          }
+        }, 180);
+      }
+
+      function migrateOldState() {
+        const raw = localStorage.getItem(OLD_STORAGE_KEY);
+        if (!raw) return null;
+        try {
+          const old = JSON.parse(raw);
+          const oldInputs = old.inputs || {};
+          return {
+            currentStep: 0,
+            inputs: {
+              participant_name: oldInputs.cov_name || '',
+              participant_team: oldInputs.cov_team || '',
+              small_win: oldInputs.act1_record || '',
+              capability_statement: oldInputs.ai_whispering_result || '',
+              market_idea_1: oldInputs.market_idea_1 || '',
+              market_idea_2: oldInputs.market_idea_2 || '',
+              vision_ai: oldInputs.v_ai_target || '',
+              vision_routine: oldInputs.v_routine_target || '',
+              vision_network: oldInputs.v_network_target || '',
+              vision_action: oldInputs.v_action_target || '',
+              milestone_before: oldInputs.stepp_prev || '',
+              milestone_after: oldInputs.stepp_post || '',
+              vulnerable_start: normalizeTime(oldInputs.lazy_start),
+              vulnerable_end: normalizeTime(oldInputs.lazy_end),
+              defense_strategy: oldInputs.team_defense_idea || '',
+              peer_message: oldInputs.buddy1_msg || '',
+              signature: oldInputs.pledge_sig || ''
+            },
+            strength: old.skillGroup || '',
+            strengthName: old.skillName || '',
+            energy: ''
+          };
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function normalizeTime(value) {
+        if (!value) return '';
+        const number = String(value).replace(/[^0-9]/g, '').slice(0, 2);
+        if (!number) return '';
+        const hour = Math.min(23, Math.max(0, Number(number)));
+        return `${String(hour).padStart(2, '0')}:00`;
+      }
+
+      function loadState() {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          const parsed = saved ? JSON.parse(saved) : migrateOldState();
+          if (parsed && typeof parsed === 'object') {
+            state = {
+              ...defaultState,
+              ...parsed,
+              inputs: { ...(parsed.inputs || {}) },
+              predigerQuiz: { ...defaultQuizState, ...(parsed.predigerQuiz || {}) },
+              currentStep: Math.min(MAX_STEP, Math.max(0, Number(parsed.currentStep) || 0))
+            };
+            const previousPrimary = state.strength === '생각' ? '사고' : state.strength;
+            const storedSecondary = state.secondaryStrength || state.predigerQuiz.secondary || '';
+            const previousSecondary = storedSecondary === '생각' ? '사고' : storedSecondary;
+            state.strengths = Array.isArray(parsed.strengths) && parsed.strengths.length
+              ? parsed.strengths
+              : [previousPrimary, previousSecondary].filter(Boolean);
+            syncStrengthState();
+            if (!saved) {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+              showToast('이전 작성 내용을 불러왔습니다.');
+            }
+          }
+        } catch (error) {
+          state = { ...defaultState, inputs: {}, strengths: [], predigerQuiz: { ...defaultQuizState, answers: [], scores: {} } };
+          setSaveStatus('error', '저장 확인 필요');
+        }
+      }
+
+      function restoreInputs() {
+        Object.entries(state.inputs).forEach(([id, value]) => {
+          const element = document.getElementById(id);
+          if (element && typeof value === 'string') element.value = value;
+        });
+        updateStrengthUI();
+        updateEnergyUI();
+        syncSummary();
+      }
+
+      function syncStrengthState() {
+        const selected = [];
+        (state.strengths || []).forEach(type => {
+          const normalized = type === '생각' ? '사고' : type;
+          if (predigerTypes[normalized] && !selected.includes(normalized) && selected.length < 2) selected.push(normalized);
+        });
+        state.strengths = selected;
+        state.strength = selected[0] || '';
+        state.strengthName = selected[0] ? predigerTypes[selected[0]].strengthName : '';
+        state.secondaryStrength = selected[1] || '';
+        state.secondaryStrengthName = selected[1] ? predigerTypes[selected[1]].strengthName : '';
+      }
+
+      function strengthSummaryText() {
+        if (!state.strengths.length) return '1순위와 2순위를 선택해 주세요.';
+        const first = `1순위: ${state.strength} 유형 · ${state.strengthName}`;
+        if (!state.secondaryStrength) return `${first} / 2순위를 선택해 주세요.`;
+        return `${first} / 2순위: ${state.secondaryStrength} 유형 · ${state.secondaryStrengthName}`;
+      }
+
+      function updateStrengthUI() {
+        syncStrengthState();
+        $$('[data-strength]').forEach(button => {
+          const rank = state.strengths.indexOf(button.dataset.strength);
+          button.setAttribute('aria-pressed', rank >= 0 ? 'true' : 'false');
+          if (rank >= 0) button.dataset.rank = String(rank + 1);
+          else button.removeAttribute('data-rank');
+        });
+        $('#strength_result').textContent = strengthSummaryText();
+        const quizStatus = $('#prediger_quiz_status');
+        if (state.predigerQuiz && state.predigerQuiz.completed) {
+          const matchesQuiz = state.strength === state.predigerQuiz.primary && state.secondaryStrength === state.predigerQuiz.secondary;
+          quizStatus.textContent = matchesQuiz ? '검사 완료 · 1·2순위 적용' : '검사 완료 · 직접 수정됨';
+          quizStatus.classList.add('complete');
+          $('#start_prediger_quiz').textContent = '검사 결과 다시 보기';
+        } else {
+          quizStatus.textContent = '검사 전';
+          quizStatus.classList.remove('complete');
+          $('#start_prediger_quiz').textContent = '내 프레디저 유형 3분 검사하기';
+        }
+        $('#summary_strength').textContent = state.strengths.length ? strengthSummaryText() : '선택 대기 중';
+      }
+
+      function updateEnergyUI() {
+        $$('[data-energy]').forEach(button => {
+          button.setAttribute('aria-pressed', button.dataset.energy === state.energy ? 'true' : 'false');
+        });
+        $('#summary_energy').textContent = state.energy || '선택 대기 중';
+      }
+
+      function syncSummary() {
+        $$('[data-out]').forEach(target => {
+          const value = state.inputs[target.dataset.out] || '';
+          target.textContent = value || (target.dataset.out === 'peer_message' ? '함께 시작해 봅시다!' : '입력 대기 중');
+        });
+        const start = state.inputs.vulnerable_start || '';
+        const end = state.inputs.vulnerable_end || '';
+        const trigger = state.inputs.vulnerable_trigger || '';
+        const timeText = start || end ? `${start || '--:--'} ~ ${end || '--:--'}` : '시간 미입력';
+        $('#summary_vulnerable').textContent = trigger ? `${timeText} · ${trigger}` : timeText;
+        updateStrengthUI();
+        updateEnergyUI();
+      }
+
+      function updatePrompt() {
+        const type = state.strength
+          ? `1순위 ${state.strength} 유형(${state.strengthName})${state.secondaryStrength ? `, 2순위 ${state.secondaryStrength} 유형(${state.secondaryStrengthName})` : ''}`
+          : '[선택 유형]';
+        const action = state.inputs.small_win || '[나의 작은 변화]';
+        $('#ai_prompt_text').textContent = `나의 강점 유형은 ${type}이고, 실제 행동 경험은 ${action}입니다. 두 유형의 조합을 반영하되 과장하지 말고 자기소개서에 활용할 수 있는 역량 문장 2개를 작성해 주세요. 각 문장은 행동과 결과가 드러나도록 60자 안팎으로 작성해 주세요.`;
+      }
+
+      function emptyScores() {
+        return { 자료: 0, 사물: 0, 사고: 0, 사람: 0 };
+      }
+
+      function calculateQuizScores() {
+        const scores = emptyScores();
+        (state.predigerQuiz.answers || []).forEach(type => {
+          if (Object.prototype.hasOwnProperty.call(scores, type)) scores[type] += 1;
+        });
+        state.predigerQuiz.scores = scores;
+        return scores;
+      }
+
+      function selectedQuizAnswer() {
+        if (quizStep < predigerQuestions.length) return state.predigerQuiz.answers[quizStep] || '';
+        return state.predigerQuiz.tieAnswer || '';
+      }
+
+      function renderQuizQuestion() {
+        $('#prediger_quiz_questions').classList.remove('hidden');
+        $('#prediger_quiz_result').classList.add('hidden');
+        const isTie = quizStep >= predigerQuestions.length;
+        const total = isTie ? 5 : 4;
+        const current = isTie ? 5 : quizStep + 1;
+        const percent = Math.round((current / total) * 100);
+        $('#quiz_progress_label').textContent = isTie ? `추가 확인 · ${quizTieRank}순위` : `${current}/4 문항`;
+        $('#quiz_progress_percent').textContent = `${percent}%`;
+        $('#quiz_progress_bar').style.width = `${percent}%`;
+
+        const question = isTie
+          ? `${quizTieRank}순위 후보의 점수가 같습니다. 나에게 힘을 주는 환경과 더 가까운 것은 무엇인가요?`
+          : predigerQuestions[quizStep].question;
+        const options = isTie
+          ? quizTieTypes.map(type => ({ type, text: predigerTypes[type].description }))
+          : predigerQuestions[quizStep].options;
+        $('#quiz_question').textContent = question;
+        const selected = selectedQuizAnswer();
+        $('#quiz_options').innerHTML = options.map((option, index) => `
+          <button type="button" class="quiz-option" data-quiz-type="${option.type}" aria-pressed="${selected === option.type ? 'true' : 'false'}">
+            <span class="quiz-option-number">${index + 1}</span>
+            <span><strong>${option.type} · ${predigerTypes[option.type].english}</strong><span>${option.text}</span></span>
+          </button>`).join('');
+        $('#quiz_prev').disabled = quizStep === 0;
+        $('#quiz_next').textContent = isTie || quizStep === predigerQuestions.length - 1 ? '순위 확인' : '다음 문항';
+        $('#quiz_next').disabled = !selected;
+      }
+
+      function showQuizResult() {
+        const result = state.predigerQuiz;
+        const info = predigerTypes[result.primary];
+        $('#prediger_quiz_questions').classList.add('hidden');
+        $('#prediger_quiz_result').classList.remove('hidden');
+        $('#quiz_result_title').textContent = `1순위 ${result.primary} · ${info.english}`;
+        $('#quiz_result_description').textContent = info.description;
+        const secondary = $('#quiz_result_secondary');
+        if (result.secondary) {
+          secondary.textContent = `2순위는 ${result.secondary} · ${predigerTypes[result.secondary].english} 유형입니다. ${predigerTypes[result.secondary].description}`;
+          secondary.classList.remove('hidden');
+        } else {
+          secondary.textContent = '';
+          secondary.classList.add('hidden');
+        }
+        $('#quiz_score_list').innerHTML = Object.entries(result.scores || emptyScores())
+          .map(([type, score]) => `<span>${type} ${score}점</span>`).join('');
+      }
+
+      function highestTypes(scores, excluded = []) {
+        const candidates = Object.keys(scores).filter(type => !excluded.includes(type));
+        const maxScore = Math.max(...candidates.map(type => scores[type]));
+        return candidates.filter(type => scores[type] === maxScore);
+      }
+
+      function resolveSecondRank(scores) {
+        const secondTypes = highestTypes(scores, [quizResolvedPrimary]);
+        if (secondTypes.length === 1) {
+          finishQuiz(quizResolvedPrimary, secondTypes[0], scores);
+          return;
+        }
+        quizTieRank = 2;
+        quizTieTypes = secondTypes;
+        quizStep = predigerQuestions.length;
+        state.predigerQuiz.tieAnswer = '';
+        renderQuizQuestion();
+      }
+
+      function resolveQuizRanks(scores) {
+        const firstTypes = highestTypes(scores);
+        if (firstTypes.length === 1) {
+          quizResolvedPrimary = firstTypes[0];
+          resolveSecondRank(scores);
+          return;
+        }
+        quizTieRank = 1;
+        quizTieTypes = firstTypes;
+        quizStep = predigerQuestions.length;
+        state.predigerQuiz.tieAnswer = '';
+        renderQuizQuestion();
+      }
+
+      function finishQuiz(primary, secondary, scores) {
+        state.predigerQuiz = {
+          ...state.predigerQuiz,
+          scores,
+          completed: true,
+          primary,
+          secondary
+        };
+        state.strengths = [primary, secondary].filter(Boolean);
+        syncStrengthState();
+        updateStrengthUI();
+        updatePrompt();
+        syncSummary();
+        saveState();
+        showQuizResult();
+      }
+
+      function advanceQuiz() {
+        if (!selectedQuizAnswer()) {
+          showToast('답변 하나를 선택해 주세요.');
+          return;
+        }
+        if (quizStep < predigerQuestions.length - 1) {
+          quizStep += 1;
+          renderQuizQuestion();
+          return;
+        }
+        const scores = calculateQuizScores();
+        if (quizStep === predigerQuestions.length - 1) {
+          resolveQuizRanks(scores);
+          return;
+        }
+        if (quizTieRank === 1) {
+          quizResolvedPrimary = state.predigerQuiz.tieAnswer;
+          resolveSecondRank(scores);
+        } else {
+          finishQuiz(quizResolvedPrimary, state.predigerQuiz.tieAnswer, scores);
+        }
+      }
+
+      function startQuiz(reset = false) {
+        if (reset || !state.predigerQuiz) {
+          state.predigerQuiz = { ...defaultQuizState, answers: [], scores: {} };
+          quizStep = 0;
+          quizTieTypes = [];
+          quizTieRank = 0;
+          quizResolvedPrimary = '';
+        }
+        const dialog = $('#prediger_quiz_dialog');
+        if (state.predigerQuiz.completed && !reset) {
+          showQuizResult();
+        } else {
+          quizStep = Math.min(3, Math.max(0, (state.predigerQuiz.answers || []).filter(Boolean).length));
+          if (quizStep === 3 && state.predigerQuiz.answers[3]) quizStep = 3;
+          renderQuizQuestion();
+        }
+        if (!dialog.open) dialog.showModal();
+      }
+
+      function goToStep(step) {
+        const next = Math.min(MAX_STEP, Math.max(0, Number(step)));
+        state.currentStep = next;
+        $$('.panel').forEach(panel => {
+          const active = Number(panel.dataset.step) === next;
+          panel.classList.toggle('active', active);
+          panel.hidden = !active;
+        });
+        $('#summary_page').classList.remove('visible');
+        const percent = Math.round((next / MAX_STEP) * 100);
+        $('#progress_title').textContent = stepTitles[next];
+        $('#progress_text').textContent = next === 0 ? '준비 · 0%' : `${next}/${MAX_STEP}단계 · ${percent}%`;
+        $('#progress_bar').style.width = `${percent}%`;
+        $('#prev_step').disabled = next === 0;
+        $('#prev_step').style.visibility = next === 0 ? 'hidden' : 'visible';
+        $('#next_step').textContent = next === MAX_STEP ? '계획서 완성' : '다음 단계';
+        updatePrompt();
+        saveState();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function openSummary() {
+        syncSummary();
+        $$('.panel').forEach(panel => { panel.classList.remove('active'); panel.hidden = true; });
+        $('#summary_page').classList.add('visible');
+        $('#progress_title').textContent = '원페이지 진로계획서';
+        $('#progress_text').textContent = '완성 · 100%';
+        $('#progress_bar').style.width = '100%';
+        $('.bottom-nav').classList.add('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showToast('진로계획서가 완성되었습니다.');
+      }
+
+      function printDocument(mode) {
+        syncSummary();
+        document.body.classList.remove('print-summary', 'print-all');
+        document.body.classList.add(mode === 'summary' ? 'print-summary' : 'print-all');
+        window.print();
+      }
+
+      document.addEventListener('input', event => {
+        const target = event.target;
+        if (!target.matches('input, textarea, select')) return;
+        if (!target.id) return;
+        state.inputs[target.id] = target.value;
+        saveState();
+        syncSummary();
+        if (target.id === 'small_win') updatePrompt();
+      });
+
+      document.addEventListener('click', event => {
+        const goButton = event.target.closest('[data-go]');
+        if (goButton) goToStep(goButton.dataset.go);
+
+        const strengthButton = event.target.closest('[data-strength]');
+        if (strengthButton) {
+          const type = strengthButton.dataset.strength;
+          const selectedIndex = state.strengths.indexOf(type);
+          if (selectedIndex >= 0) {
+            state.strengths.splice(selectedIndex, 1);
+          } else if (state.strengths.length < 2) {
+            state.strengths.push(type);
+          } else {
+            showToast('강점 유형은 2개까지 선택할 수 있습니다.');
+            return;
+          }
+          syncStrengthState();
+          updateStrengthUI();
+          updatePrompt();
+          syncSummary();
+          saveState();
+        }
+
+        const quizOption = event.target.closest('[data-quiz-type]');
+        if (quizOption) {
+          const type = quizOption.dataset.quizType;
+          if (quizStep < predigerQuestions.length) state.predigerQuiz.answers[quizStep] = type;
+          else state.predigerQuiz.tieAnswer = type;
+          $$('#quiz_options .quiz-option').forEach(button => button.setAttribute('aria-pressed', button === quizOption ? 'true' : 'false'));
+          $('#quiz_next').disabled = false;
+          saveState();
+        }
+
+        const energyButton = event.target.closest('[data-energy]');
+        if (energyButton) {
+          state.energy = energyButton.dataset.energy;
+          updateEnergyUI();
+          saveState();
+        }
+
+        const closeButton = event.target.closest('[data-close-dialog]');
+        if (closeButton) closeButton.closest('dialog').close();
+      });
+
+      $('#prev_step').addEventListener('click', () => goToStep(state.currentStep - 1));
+      $('#start_prediger_quiz').addEventListener('click', () => startQuiz(false));
+      $('#quiz_prev').addEventListener('click', () => {
+        if (quizStep >= predigerQuestions.length) {
+          quizStep = predigerQuestions.length - 1;
+          quizTieRank = 0;
+          quizTieTypes = [];
+          quizResolvedPrimary = '';
+          state.predigerQuiz.tieAnswer = '';
+        } else if (quizStep > 0) {
+          quizStep -= 1;
+        }
+        renderQuizQuestion();
+      });
+      $('#quiz_next').addEventListener('click', advanceQuiz);
+      $('#quiz_restart').addEventListener('click', () => startQuiz(true));
+      $('#quiz_finish').addEventListener('click', () => {
+        $('#prediger_quiz_dialog').close();
+        showToast(`${state.predigerQuiz.primary}·${state.predigerQuiz.secondary} 유형이 1·2순위로 선택되었습니다.`);
+        $('#strength_result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+      $('#next_step').addEventListener('click', () => {
+        if (state.currentStep >= MAX_STEP) openSummary();
+        else goToStep(state.currentStep + 1);
+      });
+      $('#complete_workbook').addEventListener('click', openSummary);
+      $('#back_to_edit').addEventListener('click', () => {
+        $('.bottom-nav').classList.remove('hidden');
+        goToStep(MAX_STEP);
+      });
+      $('#print_summary').addEventListener('click', () => printDocument('summary'));
+      $('#print_all').addEventListener('click', () => printDocument('all'));
+      window.addEventListener('afterprint', () => document.body.classList.remove('print-summary', 'print-all'));
+
+      $('#copy_prompt').addEventListener('click', async () => {
+        updatePrompt();
+        const text = $('#ai_prompt_text').textContent;
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast('AI 프롬프트를 복사했습니다.');
+        } catch (error) {
+          const range = document.createRange();
+          range.selectNodeContents($('#ai_prompt_text'));
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          showToast('문장을 길게 눌러 복사해 주세요.');
+        }
+      });
+
+      $('#reset_app').addEventListener('click', () => $('#reset_dialog').showModal());
+      $('#confirm_reset').addEventListener('click', () => {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(OLD_STORAGE_KEY);
+        location.reload();
+      });
+
+      window.addEventListener('beforeinstallprompt', event => {
+        event.preventDefault();
+        deferredPrompt = event;
+        $('#install_app').classList.remove('hidden');
+      });
+      $('#install_app').addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        $('#install_app').classList.add('hidden');
+      });
+      $('#ios_help').addEventListener('click', () => $('#install_dialog').showModal());
+
+      function configureInstallHelp() {
+        const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+        const standalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+        if (isIos && !standalone) $('#ios_help').classList.remove('hidden');
+      }
+
+      function setToday() {
+        const today = new Date();
+        $('#summary_date').textContent = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(today);
+      }
+
+      if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+        window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+      }
+
+      loadState();
+      restoreInputs();
+      setToday();
+      configureInstallHelp();
+      goToStep(state.currentStep);
+    })();
+  </script>
+</body>
+</html>
